@@ -30,6 +30,10 @@ app.use('/api/', limiter);
 // Routes
 app.use('/api/video', videoRoutes);
 
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 // Serve index.html for root path
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));

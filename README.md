@@ -7,7 +7,7 @@ A full-featured web application to download videos from any popular platform (Yo
 - 🌍 **Multi-Platform Support**: Download from 100+ video platforms
 - 🎯 **Quality Selection**: Choose from 360p to 4K resolution
 - ⚡ **Fast Downloads**: Optimized for quick video processing
-- 🔒 **Privacy Focused**: No data storage on server
+- 🔒 **Privacy Focused**: No accounts or database; temporary downloads are cleaned up
 - 📱 **Responsive Design**: Works on desktop, tablet, and mobile
 - 🎵 **Audio-only Downloads**: Download the best available audio stream in its source format
 - 🚀 **Reliable**: Built with modern technologies
@@ -97,6 +97,20 @@ http://localhost:3000
 4. **Download** - Start the download; your browser will save the resulting file.
 
 Audio is saved in the source audio format provided by the platform (for example, M4A or WebM). The app does not transcode audio to MP3.
+
+## ☁️ Deploy to Render
+
+This project includes a Docker configuration that installs Node.js, yt-dlp, and FFmpeg. To deploy it:
+
+1. Push the project, including `Dockerfile` and `render.yaml`, to your GitHub repository.
+2. Sign in to [Render](https://render.com/) and choose **New + → Blueprint**.
+3. Connect your GitHub account and select this repository.
+4. Review the `link-to-media` web service and choose **Apply**.
+5. Wait for the Docker build and deployment to finish, then open the `.onrender.com` URL shown in the service dashboard.
+
+Render checks `/health` to confirm that the server is ready. No environment secrets are required.
+
+**Important:** The included free plan uses an ephemeral filesystem. Downloaded files are temporary, are removed when the instance restarts, and the app already cleans up old files after an hour. Free web services may sleep while idle and take time to wake. Video downloads also use significant CPU, disk, and bandwidth; use the service only for content you are authorized to download and check Render's current usage limits before sharing the public URL. Persistent storage and higher resource limits require an appropriate paid plan.
 
 ## 🔧 Configuration
 
