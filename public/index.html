@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link to Media - Video and Audio Downloads</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="brand-mark" aria-hidden="true">▶</div>
+                <p class="eyebrow">YOUR MEDIA, YOUR WAY</p>
+                <h1>Link to <span>Media</span></h1>
+                <p>Save a video or keep only the audio. Pick a link and choose your format.</p>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Input Section -->
+            <section class="input-section">
+                <div class="card">
+                    <div class="section-heading">
+                        <span class="step-number">01</span>
+                        <div>
+                            <h2>Choose your output</h2>
+                            <p>What would you like to download?</p>
+                        </div>
+                    </div>
+                    <div class="mode-selector" role="group" aria-label="Choose output type">
+                        <button class="mode-card active" type="button" data-output-mode="video" aria-pressed="true" onclick="setOutputMode('video')">
+                            <span class="mode-icon" aria-hidden="true">▣</span>
+                            <span class="mode-copy">
+                                <strong>Video</strong>
+                                <small>Picture + sound</small>
+                            </span>
+                            <span class="mode-check" aria-hidden="true">✓</span>
+                        </button>
+                        <button class="mode-card" type="button" data-output-mode="audio" aria-pressed="false" onclick="setOutputMode('audio')">
+                            <span class="mode-icon audio-icon" aria-hidden="true">♫</span>
+                            <span class="mode-copy">
+                                <strong>Audio only</strong>
+                                <small>Best available audio</small>
+                            </span>
+                            <span class="mode-check" aria-hidden="true">✓</span>
+                        </button>
+                    </div>
+
+                    <div class="section-heading url-heading">
+                        <span class="step-number">02</span>
+                        <div>
+                            <h2>Paste a link</h2>
+                            <p>Works with YouTube and many other supported platforms.</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input 
+                            type="url" 
+                            id="videoUrl" 
+                            placeholder="https://www.youtube.com/watch?v=..." 
+                            class="url-input"
+                            aria-label="Video URL"
+                        >
+                        <button class="btn btn-primary" type="button" onclick="getVideoInfo()">
+                            <span class="btn-icon" aria-hidden="true">↗</span> Fetch link
+                        </button>
+                    </div>
+                    <p class="input-hint"><span aria-hidden="true">🔒</span> Processed on this server for your download; no account needed.</p>
+                    <div id="urlError" class="error-message" style="display: none;"></div>
+                </div>
+            </section>
+
+            <!-- Video Info Section -->
+            <section id="infoSection" class="info-section" style="display: none;">
+                <div class="card">
+                    <div class="video-info-grid">
+                        <div class="video-thumbnail">
+                            <img id="thumbnail" src="" alt="Video Thumbnail">
+                        </div>
+                        <div class="video-details">
+                            <h2 id="videoTitle" class="video-title"></h2>
+                            <div class="video-meta">
+                                <p><strong>Uploader:</strong> <span id="uploader"></span></p>
+                                <p><strong>Duration:</strong> <span id="duration"></span></p>
+                                <p><strong>Upload Date:</strong> <span id="uploadDate"></span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quality Selection -->
+                    <div class="quality-section" id="qualitySection">
+                        <h3>Select video quality</h3>
+                        <div id="formatsList" class="formats-list"></div>
+                        <div id="qualityError" class="error-message" style="display: none;"></div>
+                    </div>
+                    <div id="audioNote" class="audio-note" style="display: none;">
+                        <span class="audio-note-icon" aria-hidden="true">♫</span>
+                        <span><strong>Audio only</strong><small>We’ll download the best available audio stream. The file format depends on the source.</small></span>
+                    </div>
+
+                    <!-- Download Button -->
+                    <div class="download-section">
+                        <button class="btn btn-success" id="downloadBtn" type="button" onclick="downloadMedia()">
+                            <span class="btn-icon" aria-hidden="true">↓</span> Download video
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Loading Section -->
+            <section id="loadingSection" class="loading-section" style="display: none;">
+                <div class="card">
+                    <div class="spinner"></div>
+                    <p id="loadingText">Fetching video information...</p>
+                </div>
+            </section>
+
+            <!-- Download Progress Section -->
+            <section id="progressSection" class="progress-section" style="display: none;">
+                <div class="card">
+                    <div class="progress-container">
+                        <h3 id="progressTitle">Preparing your download...</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <p id="progressText">Please wait, this may take a while...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Success Section -->
+            <section id="successSection" class="success-section" style="display: none;">
+                <div class="card success-card">
+                    <div class="success-icon">✅</div>
+                    <h2>Download Complete!</h2>
+                    <p id="successMessage">Your video has been downloaded successfully.</p>
+                    <button class="btn btn-primary" onclick="resetForm()">
+                        <span class="btn-icon">🔄</span> Download Another
+                    </button>
+                </div>
+            </section>
+
+            <!-- Error Section -->
+            <section id="errorSection" class="error-section" style="display: none;">
+                <div class="card error-card">
+                    <div class="error-icon">❌</div>
+                    <h2>Download Failed</h2>
+                    <p id="errorMessage">An error occurred during the download.</p>
+                    <button class="btn btn-primary" onclick="resetForm()">
+                        <span class="btn-icon">🔄</span> Try Again
+                    </button>
+                </div>
+            </section>
+
+            <!-- Supported Platforms -->
+            <section class="platforms-section">
+                <div class="card">
+                    <div class="section-heading">
+                        <span class="section-icon" aria-hidden="true">✦</span>
+                        <div><h2>Made for your favorite platforms</h2><p>Paste a supported link to get started.</p></div>
+                    </div>
+                    <div class="platforms-grid">
+                        <div class="platform">
+                            <div class="platform-icon">▶️</div>
+                            <p>YouTube</p>
+                        </div>
+                        <div class="platform">
+                            <div class="platform-icon">📹</div>
+                            <p>Vimeo</p>
+                        </div>
+                        <div class="platform">
+                            <div class="platform-icon">📷</div>
+                            <p>Instagram</p>
+                        </div>
+                        <div class="platform">
+                            <div class="platform-icon">🎵</div>
+                            <p>TikTok</p>
+                        </div>
+                        <div class="platform">
+                            <div class="platform-icon">📺</div>
+                            <p>Dailymotion</p>
+                        </div>
+                        <div class="platform">
+                            <div class="platform-icon">🎬</div>
+                            <p>And Many More</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section class="features-section">
+                <div class="card">
+                    <div class="section-heading">
+                        <span class="section-icon" aria-hidden="true">✧</span>
+                        <div><h2>Simple by design</h2><p>Everything you need, without the extra steps.</p></div>
+                    </div>
+                    <ul class="features-list">
+                        <li><span>01</span> Video quality choices</li>
+                        <li><span>02</span> Audio-only downloads</li>
+                        <li><span>03</span> Support for many platforms</li>
+                        <li><span>04</span> Responsive on mobile and desktop</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2026 Link to Media</p>
+            <p class="disclaimer">This tool is for personal use only. Please respect copyright laws.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
