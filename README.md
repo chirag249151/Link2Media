@@ -112,6 +112,8 @@ Render checks `/health` to confirm that the server is ready. No environment secr
 
 **Important:** The included free plan uses an ephemeral filesystem. Downloaded files are temporary, are removed when the instance restarts, and the app already cleans up old files after an hour. Free web services may sleep while idle and take time to wake. Video downloads also use significant CPU, disk, and bandwidth; use the service only for content you are authorized to download and check Render's current usage limits before sharing the public URL. Persistent storage and higher resource limits require an appropriate paid plan.
 
+**YouTube availability:** YouTube may block requests from Render or other cloud-hosting IP addresses with an anti-bot or sign-in challenge. This is controlled by YouTube and cannot be reliably fixed by the app. Do not upload personal browser cookies to a public deployment. Running the app from your own computer may work for some links, but restricted videos can still require sign-in.
+
 ## 🔧 Configuration
 
 ### Environment Variables

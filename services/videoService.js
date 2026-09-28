@@ -95,6 +95,10 @@ function getYtDlpErrorMessage(error, action) {
   }
 
   const details = error.stderr?.trim();
+  if (/sign in to confirm you're not a bot|confirm you're not a bot/i.test(details || error.message || '')) {
+    return 'YouTube is blocking automated requests from this hosted server. The link may work when you run the app locally, but some videos may still require YouTube sign-in. Do not upload personal browser cookies to this public website.';
+  }
+
   return details || error.message || `Failed while ${action}.`;
 }
 
