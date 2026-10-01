@@ -621,9 +621,59 @@ input:focus-visible {
     border-color: #d8d4ff;
 }
 
-.platform-icon {
-    margin-bottom: 6px;
-    font-size: 1.7rem;
+.platform-logo {
+    width: 34px;
+    height: 34px;
+    margin: 0 auto 9px;
+    background-color: currentColor;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-size: contain;
+    -webkit-mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: contain;
+}
+
+.logo-youtube {
+    color: #ff0033;
+    mask-image: url("/assets/logos/youtube.svg");
+    -webkit-mask-image: url("/assets/logos/youtube.svg");
+}
+
+.logo-vimeo {
+    color: #1ab7ea;
+    mask-image: url("/assets/logos/vimeo.svg");
+    -webkit-mask-image: url("/assets/logos/vimeo.svg");
+}
+
+.logo-instagram {
+    color: #e4405f;
+    mask-image: url("/assets/logos/instagram.svg");
+    -webkit-mask-image: url("/assets/logos/instagram.svg");
+}
+
+.logo-tiktok {
+    color: #111111;
+    mask-image: url("/assets/logos/tiktok.svg");
+    -webkit-mask-image: url("/assets/logos/tiktok.svg");
+}
+
+.logo-dailymotion {
+    color: #0066dc;
+    mask-image: url("/assets/logos/dailymotion.svg");
+    -webkit-mask-image: url("/assets/logos/dailymotion.svg");
+}
+
+.platform-more {
+    display: grid;
+    width: 42px;
+    height: 34px;
+    place-items: center;
+    border-radius: 8px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 0.79rem;
+    font-weight: 800;
 }
 
 .platform p {

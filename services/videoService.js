@@ -12,40 +12,40 @@ const __dirname = path.dirname(__filename);
 
 const execFileAsync = promisify(execFile);
 
-// Find yt-dlp executable
-function findYtDlpPath() {
-  try {
-    if (os.platform() === 'win32') {
-      const result = execSync('where yt-dlp.exe', { encoding: 'utf-8' }).trim();
-      if (result) return result.split('\n')[0];
-    } else {
-      const result = execSync('which yt-dlp', { encoding: 'utf-8' }).trim();
-      if (result) return result;
-    }
-  } catch (e) {
-    // yt-dlp not in PATH, try common installation locations
-  }
-
-  // Try common installation paths for Windows
+function findYtDlpCommand() {
   if (os.platform() === 'win32') {
-    const commonPaths = [
-      `${os.homedir()}\\AppData\\Local\\Python\\pythoncore-3.14-64\\Scripts\\yt-dlp.exe`,
-      `${os.homedir()}\\AppData\\Local\\Python\\Python314\\Scripts\\yt-dlp.exe`,
-      `C:\\Users\\${os.userInfo().username}\\AppData\\Local\\Python\\Python314\\Scripts\\yt-dlp.exe`,
+    const pythonPaths = [
+      path.join(os.homedir(), 'AppData', 'Local', 'Python', 'pythoncore-3.14-64', 'python.exe'),
+      path.join(os.homedir(), 'AppData', 'Local', 'Python', 'Python314', 'python.exe')
     ];
-    
-    for (const p of commonPaths) {
+
+    for (const pythonPath of pythonPaths) {
       try {
-        execSync(`"${p}" --version`, { stdio: 'ignore' });
-        return p;
-      } catch (e) {
-        // Continue to next path
+        execSync(`"${pythonPath}" -m yt_dlp --version`, { stdio: 'ignore' });
+        return { executable: pythonPath, args: ['-m', 'yt_dlp'] };
+      } catch (error) {
+        // Try the next Python installation.
       }
     }
   }
 
-  // Default fallback
-  return os.platform() === 'win32' ? 'yt-dlp.exe' : 'yt-dlp';
+  try {
+    const command = os.platform() === 'win32' ? 'where yt-dlp.exe' : 'which yt-dlp';
+    const result = execSync(command, { encoding: 'utf-8' }).trim();
+    if (result) {
+      return {
+        executable: result.split(/\r?\n/)[0],
+        args: []
+      };
+    }
+  } catch (error) {
+    // Fall back to the executable name so PATH-based installations still work.
+  }
+
+  return {
+    executable: os.platform() === 'win32' ? 'yt-dlp.exe' : 'yt-dlp',
+    args: []
+  };
 }
 
 function findFFmpegPath() {
@@ -85,7 +85,7 @@ function findFFmpegPath() {
   return null;
 }
 
-const YT_DLP_PATH = findYtDlpPath();
+const YT_DLP = findYtDlpCommand();
 const FFMPEG_PATH = findFFmpegPath();
 const DOWNLOADS_DIR = path.join(process.cwd(), 'downloads');
 
@@ -113,7 +113,8 @@ export class VideoService {
    */
   static async getVideoInfo(url) {
     try {
-      const { stdout } = await execFileAsync(YT_DLP_PATH, [
+      const { stdout } = await execFileAsync(YT_DLP.executable, [
+        ...YT_DLP.args,
         '--force-ipv4',
         '-j',
         '--no-warnings',
@@ -243,7 +244,7 @@ export class VideoService {
 
       console.log(`Downloading ${mode}${mode === 'video' ? ` with format: ${format}` : ''}`);
 
-      const { stdout, stderr } = await execFileAsync(YT_DLP_PATH, args, {
+      const { stdout, stderr } = await execFileAsync(YT_DLP.executable, [...YT_DLP.args, ...args], {
         maxBuffer: 50 * 1024 * 1024,
         timeout: 600000, // 10 minutes timeout
         cwd: tempDir,
@@ -370,10 +371,16 @@ export class VideoService {
    */
   static async validateUrl(url) {
     try {
-      const { stdout } = await execAsync(`${YT_DLP_PATH} --no-warnings -e "${url}"`, {
+      const { stdout } = await execFileAsync(YT_DLP.executable, [
+        ...YT_DLP.args,
+        '--no-warnings',
+        '-e',
+        url
+      ], {
         maxBuffer: 1024 * 1024,
         timeout: 15000,
-        shell: true
+        windowsHide: true,
+        encoding: 'utf8'
       });
 
       return {
